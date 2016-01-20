@@ -8,12 +8,13 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.example.appfun.adapter.HeroAdapter;
-import com.example.appfun.bean.Hero;
-import com.example.appfun.bean.HeroInfo;
+import com.example.appfun.bean.HeroDetailsInfo;
+import com.example.appfun.bean.HeroSimpleInfo;
 import com.example.appfun.constant.ConstantParms;
 import com.example.appfun.dao.DatabaseHelper;
 import com.example.appfun.event.ItemListener;
@@ -85,7 +86,7 @@ public class MainActivity extends BaseActivity {
                         }
                     });
                     return Observable.from(heroInfo.getResult().getHeroes());
-                }).subscribe(new Subscriber<HeroInfo.ResultEntity.HeroesEntity>() {
+                }).subscribe(new Subscriber<HeroSimpleInfo.ResultEntity.HeroesEntity>() {
             @Override
             public void onCompleted() {
                 mRecyclerView.setAdapter(mHeroAdapter);
@@ -97,27 +98,31 @@ public class MainActivity extends BaseActivity {
             }
 
             @Override
-            public void onNext(final HeroInfo.ResultEntity.HeroesEntity heroesEntity) {
+            public void onNext(final HeroSimpleInfo.ResultEntity.HeroesEntity heroesEntity) {
                 heroesEntity.setUrl(URLConfig.HERO_IMG_URL + heroesEntity.getName().substring(14) + ConstantParms.largePic);
             }
         });
     }
 
-    //从assets 文件夹中获取文件并读取数据
-    private Hero getDb() {
-        List<Object> list = new ArrayList<>();
+
+    private List<HeroDetailsInfo> getDb() {
         SQLiteDatabase db = DatabaseHelper.openDatabase(this);
-        Hero hero = new Hero();
-        Cursor cursor = db.rawQuery("select * from heroinfo where id=1",null);
+        List<HeroDetailsInfo> heroDetailsInfo = new ArrayList<>();
+        HeroDetailsInfo heroDetailsInfo1 = new HeroDetailsInfo();
+        Cursor cursor = db.rawQuery("select * from heroinfo", null);
         if (cursor.moveToFirst()) {
-            Integer personid = cursor.getInt(cursor.getColumnIndex("id"));
-            String name = cursor.getString(cursor.getColumnIndex("hero_name"));
-            hero.setHeroId(personid);
-            hero.setHeroName(name);
+            for (int i = 0; i < cursor.getCount(); i++) {
+                cursor.move(i);
+                Log.d("1", cursor.getString(0));
+//                heroDetailsInfo.setHero_int(cursor.getString(0));
+//                heroDetailsInfo.setHeri_agi_up(cursor.getString(1));
+//                heroDetailsInfo.setHero_int_up(cursor.getString(2));
+            }
         }
+
         cursor.close();
         db.close();
-        return hero;
+        return heroDetailsInfo;
     }
 
     @Override

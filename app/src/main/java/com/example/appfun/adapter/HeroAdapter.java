@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.example.appfun.R;
 import com.example.appfun.adapter.vh.HeroHolder;
-import com.example.appfun.bean.HeroInfo;
+import com.example.appfun.bean.HeroSimpleInfo;
 import com.example.appfun.event.ItemListener;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class HeroAdapter extends RecyclerView.Adapter<HeroHolder> {
     private Context mContext;
-    private List<HeroInfo.ResultEntity.HeroesEntity> mHeroData;
+    private List<HeroSimpleInfo.ResultEntity.HeroesEntity> mHeroData;
 
     private ItemListener mItemListener;
 
@@ -27,7 +27,7 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroHolder> {
         this.mItemListener = itemClickLitener;
     }
 
-    public HeroAdapter(Context context, List<HeroInfo.ResultEntity.HeroesEntity> list) {
+    public HeroAdapter(Context context, List<HeroSimpleInfo.ResultEntity.HeroesEntity> list) {
         this.mContext = context;
         this.mHeroData = list;
     }

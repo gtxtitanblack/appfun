@@ -14,7 +14,7 @@ import lombok.ToString;
 
 public
 @Data
-class HeroInfo {
+class HeroSimpleInfo {
 
     private ResultEntity result;
 

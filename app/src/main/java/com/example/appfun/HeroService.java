@@ -1,6 +1,6 @@
 package com.example.appfun;
 
-import com.example.appfun.bean.HeroInfo;
+import com.example.appfun.bean.HeroSimpleInfo;
 import com.example.appfun.url.URLConfig;
 
 import retrofit.http.GET;
@@ -12,5 +12,5 @@ import rx.Observable;
  */
 public interface HeroService {
     @GET(URLConfig.HERO_URL)
-    Observable<HeroInfo> getHeroData(@Query("key") String key, @Query("language") String language);
+    Observable<HeroSimpleInfo> getHeroData(@Query("key") String key, @Query("language") String language);
 }
