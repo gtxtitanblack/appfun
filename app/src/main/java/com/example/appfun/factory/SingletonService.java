@@ -18,11 +18,11 @@ import retrofit.RxJavaCallAdapterFactory;
 /**
  * Created by zx on 2016/1/15.
  */
+
 public class SingletonService {
     private static Gson gson = new Gson();
     private static Retrofit retrofit;
     private static WeakHashMap<String, Object> cache = new WeakHashMap<>();
-    private static SingletonService instance;
 
     static {
         OkHttpClient okHttpClient = new OkHttpClient();
@@ -45,33 +45,4 @@ public class SingletonService {
         }
         return t;
     }
-
-
-//    public static synchronized SingletonService getInstance() {
-//        if (null == instance) {
-//            instance = new SingletonService();
-//        }
-//        return instance;
-//    }
-//
-//
-//    public <T> T create(Class<T> service) {
-//        T t = (T) service.getSimpleName();
-//        OkHttpClient okHttpClient = new OkHttpClient();
-//        okHttpClient.setConnectTimeout(3, TimeUnit.SECONDS);
-//        okHttpClient.setCache(new Cache(Environment.getDownloadCacheDirectory(), 20));
-//        retrofit = new Retrofit.Builder()
-//                .client(okHttpClient)
-//                .baseUrl(URLConfig.HERO_URL)
-//                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-//                .addConverterFactory(GsonConverterFactory.create(gson))
-//                .build();
-//        if (null == t) {
-//            t = retrofit.create(service);
-//        }
-//        return t;
-//
-//    }
-
-
 }

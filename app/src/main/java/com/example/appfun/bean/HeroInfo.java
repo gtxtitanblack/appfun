@@ -21,8 +21,6 @@ class HeroInfo {
     public
     @Data
     static class ResultEntity {
-        private int status;
-        private int count;
 
         private List<HeroesEntity> heroes;
 
@@ -37,7 +35,6 @@ class HeroInfo {
             private String url;
             private String localized_name;
         }
+
     }
-
-
 }

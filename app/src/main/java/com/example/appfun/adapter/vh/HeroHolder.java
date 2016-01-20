@@ -32,7 +32,7 @@ public class HeroHolder extends RecyclerView.ViewHolder implements OnClickListen
     @Override
     public boolean onLongClick(final View v) {
         if (mListener != null) {
-            mListener.onItemLongClick(v, getPosition());
+            mListener.onItemLongClick(v, getAdapterPosition());
         }
         return true;
     }
@@ -40,7 +40,7 @@ public class HeroHolder extends RecyclerView.ViewHolder implements OnClickListen
     @Override
     public void onClick(final View v) {
         if (mListener != null) {
-            mListener.onItemClick(v, getPosition());
+            mListener.onItemClick(v, getAdapterPosition());
         }
     }
 }

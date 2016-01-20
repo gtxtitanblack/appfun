@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.example.appfun.R;
 import com.example.appfun.adapter.vh.HeroHolder;
 import com.example.appfun.bean.HeroInfo;
@@ -19,7 +20,6 @@ import java.util.List;
 public class HeroAdapter extends RecyclerView.Adapter<HeroHolder> {
     private Context mContext;
     private List<HeroInfo.ResultEntity.HeroesEntity> mHeroData;
-    private String mString;
 
     private ItemListener mItemListener;
 
@@ -31,13 +31,6 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroHolder> {
         this.mContext = context;
         this.mHeroData = list;
     }
-
-
-    public HeroAdapter(Context context, String url) {
-        this.mContext = context;
-        this.mString = url;
-    }
-
 
     //给ViewHolder设置布局
     @Override
@@ -54,24 +47,18 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroHolder> {
     @Override
     public void onBindViewHolder(final HeroHolder holder, final int position) {
         holder.mTextView.setText(mHeroData.get(position).getLocalized_name());
-//        Glide.with(mContext).load(R.mipmap.ic_launcher).into(holder.mImageView);
+        Glide.with(mContext).load(mHeroData.get(position).getUrl()).into(holder.mImageView);
         // 如果设置了回调，则设置点击事件
         if (mItemListener != null) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int pos = holder.getLayoutPosition();
-                    mItemListener.onItemClick(holder.itemView, pos);
-                }
+            holder.itemView.setOnClickListener(v -> {
+                int pos = holder.getLayoutPosition();
+                mItemListener.onItemClick(holder.itemView, pos);
             });
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    int pos = holder.getLayoutPosition();
-                    mItemListener.onItemLongClick(holder.itemView, pos);
-                    removeData(pos);
-                    return false;
-                }
+            holder.itemView.setOnLongClickListener(v -> {
+                int pos = holder.getLayoutPosition();
+                mItemListener.onItemLongClick(holder.itemView, pos);
+                removeData(pos);
+                return false;
             });
         }
     }

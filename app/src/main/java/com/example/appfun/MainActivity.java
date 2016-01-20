@@ -1,97 +1,132 @@
 package com.example.appfun;
 
-import android.os.Bundle;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.example.appfun.adapter.HeroAdapter;
+import com.example.appfun.bean.Hero;
 import com.example.appfun.bean.HeroInfo;
 import com.example.appfun.constant.ConstantParms;
+import com.example.appfun.dao.DatabaseHelper;
 import com.example.appfun.event.ItemListener;
 import com.example.appfun.factory.SingletonService;
+import com.example.appfun.ui.BaseActivity;
 import com.example.appfun.url.URLConfig;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private RecyclerView mRecyclerView;
     private HeroAdapter mHeroAdapter;
+    private DrawerLayout mDrawerLayout;
+    private NavigationView mNavigationView;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycleview);
-        //设置布局的样式及动画
-        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(1,
-                StaggeredGridLayoutManager.VERTICAL));
-        mRecyclerView.setHasFixedSize(true);
-        getHero();
+    protected int getContentView() {
+        return R.layout.activity_main;
     }
 
+    @Override
+    protected void initView() {
+        mDrawerLayout = findView(R.id.drawer_layout);
+        mNavigationView = findView(R.id.id_nv_menu);
+        mRecyclerView = findView(R.id.recycleview);
+        //设置布局的样式及动画
+        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3,
+                StaggeredGridLayoutManager.VERTICAL));
+        mRecyclerView.setHasFixedSize(true);
+        setupDrawerContent(mNavigationView);
+        setBarTitleText(R.string.app_name);
+        getHero();
+        getDb();
+    }
+
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                menuItem -> {
+                    menuItem.setChecked(true);
+                    mDrawerLayout.closeDrawers();
+                    return true;
+                });
+    }
 
     private void getHero() {
         HeroService heroService = SingletonService.create(HeroService.class);
         heroService.getHeroData(ConstantParms.steamKey, ConstantParms.parmLanguage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(new Func1<HeroInfo, Observable<HeroInfo.ResultEntity.HeroesEntity>>() {
-                    @Override
-                    public Observable<HeroInfo.ResultEntity.HeroesEntity> call(HeroInfo heroInfo) {
-                        mHeroAdapter = new HeroAdapter(getApplicationContext(), heroInfo.getResult().getHeroes());
-                        mHeroAdapter.setOnItemClickLitener(new ItemListener() {
-                            @Override
-                            public void onItemClick(final View view, final int position) {
-                                Snackbar.make(view, heroInfo.getResult().getHeroes().get(position).getLocalized_name(), Snackbar.LENGTH_LONG).show();
-                            }
+                .flatMap(heroInfo -> {
+                    mHeroAdapter = new HeroAdapter(getApplicationContext(), heroInfo.getResult().getHeroes());
+                    mHeroAdapter.setOnItemClickLitener(new ItemListener() {
+                        @Override
+                        public void onItemClick(final View view, final int position) {
+                            Snackbar.make(view, heroInfo.getResult().getHeroes().get(position).getLocalized_name(), Snackbar.LENGTH_LONG).show();
+                        }
 
-                            @Override
-                            public void onItemLongClick(final View view, final int position) {
-                                Snackbar.make(view, heroInfo.getResult().getHeroes().get(position).getLocalized_name(), Snackbar.LENGTH_LONG).show();
-                            }
-                        });
-                        mRecyclerView.setAdapter(mHeroAdapter);
-                        return Observable.from(heroInfo.getResult().getHeroes());
-                    }
-                }).flatMap(new Func1<HeroInfo.ResultEntity.HeroesEntity, Observable<String>>() {
+                        @Override
+                        public void onItemLongClick(final View view, final int position) {
+                            Snackbar.make(view, heroInfo.getResult().getHeroes().get(position).getLocalized_name(), Snackbar.LENGTH_LONG).show();
+                        }
+                    });
+                    return Observable.from(heroInfo.getResult().getHeroes());
+                }).subscribe(new Subscriber<HeroInfo.ResultEntity.HeroesEntity>() {
             @Override
-            public Observable<String> call(final HeroInfo.ResultEntity.HeroesEntity heroesEntity) {
-                return getHeroImg(heroesEntity);
+            public void onCompleted() {
+                mRecyclerView.setAdapter(mHeroAdapter);
             }
-        }).subscribe(new Action1<String>() {
+
             @Override
-            public void call(final String imgUrl) {
-                System.out.println("图片地址是:" + imgUrl);
+            public void onError(final Throwable e) {
+                Snackbar.make(mRecyclerView, "网络故障，请稍候重试", Snackbar.LENGTH_LONG).show();
             }
-        }, new Action1<Throwable>() {
+
             @Override
-            public void call(final Throwable throwable) {
-                throwable.printStackTrace();
+            public void onNext(final HeroInfo.ResultEntity.HeroesEntity heroesEntity) {
+                heroesEntity.setUrl(URLConfig.HERO_IMG_URL + heroesEntity.getName().substring(14) + ConstantParms.largePic);
             }
         });
     }
 
-
-    private static Observable<String> getHeroImg(HeroInfo.ResultEntity.HeroesEntity heroesEntity) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(final Subscriber<? super String> subscriber) {
-                if (heroesEntity == null) {
-                    subscriber.onError(new NullPointerException("英雄数据为空！"));
-                    return;
-                }
-                subscriber.onNext(URLConfig.HERO_IMG_URL + heroesEntity.getName().substring(14) + ConstantParms.largePic);
-                subscriber.onCompleted();
-            }
-        });
+    //从assets 文件夹中获取文件并读取数据
+    private Hero getDb() {
+        List<Object> list = new ArrayList<>();
+        SQLiteDatabase db = DatabaseHelper.openDatabase(this);
+        Hero hero = new Hero();
+        Cursor cursor = db.rawQuery("select * from heroinfo where id=1",null);
+        if (cursor.moveToFirst()) {
+            Integer personid = cursor.getInt(cursor.getColumnIndex("id"));
+            String name = cursor.getString(cursor.getColumnIndex("hero_name"));
+            hero.setHeroId(personid);
+            hero.setHeroName(name);
+        }
+        cursor.close();
+        db.close();
+        return hero;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            mDrawerLayout.openDrawer(GravityCompat.START);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }
