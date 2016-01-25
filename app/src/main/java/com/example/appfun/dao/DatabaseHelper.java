@@ -15,11 +15,11 @@ import java.io.InputStream;
  */
 public class DatabaseHelper {
     private static SQLiteDatabase mDatabase;
-    public static final String DATABASE_FILENAME = "hero.db"; // 这个是DB文件名字
-    public static final String PACKAGE_NAME = "com.example.appfun"; // 这个是自己项目包路径
+    public static final String DATABASE_FILENAME = "hero.db";
+    public static final String PACKAGE_NAME = "com.example.appfun";
     public static final String DATABASE_PATH = "/data"
             + Environment.getDataDirectory().getAbsolutePath() + "/"
-            + PACKAGE_NAME; // 获取存储位置地址
+            + PACKAGE_NAME;
 
     public static SQLiteDatabase openDatabase(Context context) {
         try {
