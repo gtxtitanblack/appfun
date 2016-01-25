@@ -47,6 +47,8 @@ public class HeroDetailsService {
         return heroDetailsInfos;
     }
 
+
+    //获取单条数据
     public HeroDetailsInfo findHeroInfo(String heroname, Context context) {
         SQLiteDatabase db = DatabaseHelper.openDatabase(context);
         Cursor cursor = db.rawQuery("select * from heroinfo where hero_name=?", new String[]{heroname});
