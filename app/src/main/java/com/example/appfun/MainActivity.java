@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +23,8 @@ import com.example.appfun.event.ItemListener;
 import com.example.appfun.factory.SingletonService;
 import com.example.appfun.ui.HeroDetailsActivity;
 import com.example.appfun.url.URLConfig;
+
+import java.util.ArrayList;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -88,10 +92,17 @@ public class MainActivity extends AppCompatActivity {
                     mHeroAdapter.setOnItemClickLitener(new ItemListener() {
                         @Override
                         public void onItemClick(final View view, final int position) {
+                            ArrayList<String> heroInfoList = new ArrayList<>();
+                            heroInfoList.add(heroInfo.getResult().getHeroes().get(position).getLocalized_name());
+                            heroInfoList.add(heroInfo.getResult().getHeroes().get(position).getUrl());
                             Intent mIntent = new Intent(getApplicationContext(), HeroDetailsActivity.class);
-                            mIntent.putExtra("heroInfo", heroInfo.getResult().getHeroes().get(position).getLocalized_name());
-                            startActivity(mIntent);
-//                            Snackbar.make(view, heroInfo.getResult().getHeroes().get(position).getLocalized_name(), Snackbar.LENGTH_LONG).show();
+                            mIntent.putStringArrayListExtra("heroInfo", heroInfoList);
+                            View transitionView = findViewById(R.id.image);
+
+                            ActivityOptionsCompat options =
+                                    ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this,
+                                            transitionView, getString(R.string.app_name));
+                            ActivityCompat.startActivity(MainActivity.this, mIntent, options.toBundle());
                         }
 
                         @Override
@@ -113,11 +124,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onNext(final HeroSimpleInfo.ResultEntity.HeroesEntity heroesEntity) {
-                heroesEntity.setUrl(URLConfig.HERO_IMG_URL + heroesEntity.getName().substring(14) + ConstantParms.largePic);
+                heroesEntity.setUrl(URLConfig.HERO_IMG_URL + heroesEntity.getName().substring(14) + ConstantParms.fullPic);
             }
         });
     }
-
 
 
     @Override

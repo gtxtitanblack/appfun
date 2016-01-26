@@ -68,6 +68,7 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroHolder> {
         notifyItemRemoved(position);
     }
 
+
     @Override
     public int getItemCount() {
         return mHeroData == null ? 0 : mHeroData.size();

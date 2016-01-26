@@ -36,7 +36,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
     }
 
     //设置头部标题
-    public void setBarTitleText(int titleText) {
+    public void setBarTitleText(String titleText) {
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (null != mToolbar) {
             mToolbar.setTitle(titleText);
