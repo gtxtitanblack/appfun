@@ -1,4 +1,4 @@
-package com.example.appfun;
+package com.example.appfun.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,49 +15,52 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.example.appfun.R;
 import com.example.appfun.adapter.HeroAdapter;
 import com.example.appfun.bean.HeroSimpleInfo;
 import com.example.appfun.constant.ConstantParms;
 import com.example.appfun.event.ItemListener;
 import com.example.appfun.factory.SingletonService;
-import com.example.appfun.ui.HeroDetailsActivity;
+import com.example.appfun.services.HeroService;
 import com.example.appfun.url.URLConfig;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class HeroActivity extends AppCompatActivity {
+    @BindView(R.id.recycleview)
     private RecyclerView mRecyclerView;
-    private HeroAdapter mHeroAdapter;
+    @BindView(R.id.drawer_layout)
     private DrawerLayout mDrawerLayout;
+    @BindView(R.id.id_nv_menu)
     private NavigationView mNavigationView;
+    private HeroAdapter mHeroAdapter;
 
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         initView();
     }
 
-
     private void initView() {
         setupToolBar();
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mNavigationView = (NavigationView) findViewById(R.id.id_nv_menu);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycleview);
         //设置布局的样式及动画
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3,
                 StaggeredGridLayoutManager.VERTICAL));
         mRecyclerView.setHasFixedSize(true);
         setupDrawerContent(mNavigationView);
         getHero();
-//        getDb(1);
     }
 
 
@@ -71,17 +74,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupToolBar() {
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (null != mToolbar) {
-            mToolbar.setTitle(R.string.app_name);
-            setSupportActionBar(mToolbar);
-            mToolbar.setTitleTextColor(0xffffffff);
-            mToolbar.setSubtitleTextColor(0xffffffff);
-            mToolbar.setOnClickListener(v -> finish());
-            mToolbar.setOnMenuItemClickListener(item -> true);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (null != toolbar) {
+            toolbar.setTitle(R.string.app_name);
+            setSupportActionBar(toolbar);
+            toolbar.setTitleTextColor(0xffffffff);
+            toolbar.setSubtitleTextColor(0xffffffff);
+            toolbar.setOnClickListener(v -> finish());
+            toolbar.setOnMenuItemClickListener(item -> true);
         }
     }
 
+    //拿到英雄数据
     private void getHero() {
         HeroService heroService = SingletonService.create(HeroService.class);
         heroService.getHeroData(ConstantParms.steamKey, ConstantParms.parmLanguage)
@@ -97,12 +101,13 @@ public class MainActivity extends AppCompatActivity {
                             heroInfoList.add(heroInfo.getResult().getHeroes().get(position).getUrl());
                             Intent mIntent = new Intent(getApplicationContext(), HeroDetailsActivity.class);
                             mIntent.putStringArrayListExtra("heroInfo", heroInfoList);
-                            View transitionView = findViewById(R.id.image);
 
                             ActivityOptionsCompat options =
-                                    ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this,
-                                            transitionView, getString(R.string.app_name));
-                            ActivityCompat.startActivity(MainActivity.this, mIntent, options.toBundle());
+                                    ActivityOptionsCompat.makeScaleUpAnimation(view,
+                                            view.getWidth() / 2, view.getHeight() / 2,
+                                            0, 0);
+//                            startActivity(new Intent(getApplicationContext(),HeroActivity.class));
+                            ActivityCompat.startActivity(HeroActivity.this, mIntent, options.toBundle());
                         }
 
                         @Override
@@ -132,9 +137,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.nav_home) {
-            mDrawerLayout.openDrawer(GravityCompat.START);
-            return true;
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                Toast.makeText(getApplicationContext(), "safsf", Toast.LENGTH_LONG).show();
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

@@ -7,15 +7,36 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@style/AnimationActivity</item>
+    </style>
+
+    <style name="ClubToolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="contentInsetStart">0dp</item><!-- 设置该属性解决空白部分-->
+    </style>
+
+    <!-- Base application theme. “NoActionBar”隐藏原有的Actionbar 设置Toolbar -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        //.....
+        <item name="toolbarStyle">@style/ClubToolbar</item>
     </style>
 
 
-    <style name="AnimationActivity" parent="@android:style/Animation">
-        <item name="android:activityOpenEnterAnimation">@anim/pull_in_right</item>
-        <item name="android:activityOpenExitAnimation">@anim/push_out_left</item>
-        <item name="android:activityCloseEnterAnimation">@anim/pull_in_left</item>
-        <item name="android:activityCloseExitAnimation">@anim/push_out_right</item>
+
+    <style name="HeroInfoTextStyle">
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:layout_width">84dp</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="LinearLayoutStyle">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    <style name="TextViewStyle">
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
 </resources>

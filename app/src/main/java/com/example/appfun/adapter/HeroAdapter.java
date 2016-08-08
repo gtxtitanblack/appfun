@@ -35,8 +35,8 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroHolder> {
     //给ViewHolder设置布局
     @Override
     public HeroHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View mHeroView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_item, parent, false);
-        return new HeroHolder(mHeroView, mItemListener);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view, parent, false);
+        return new HeroHolder(view, mItemListener);
     }
 
     @Override

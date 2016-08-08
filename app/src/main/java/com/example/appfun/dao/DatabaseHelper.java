@@ -4,8 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 
-import com.example.appfun.R;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -15,21 +13,21 @@ import java.io.InputStream;
  */
 public class DatabaseHelper {
     private static SQLiteDatabase mDatabase;
-    public static final String DATABASE_FILENAME = "hero.db";
+
     public static final String PACKAGE_NAME = "com.example.appfun";
     public static final String DATABASE_PATH = "/data"
             + Environment.getDataDirectory().getAbsolutePath() + "/"
             + PACKAGE_NAME;
 
-    public static SQLiteDatabase openDatabase(Context context) {
+    public static SQLiteDatabase openDatabase(Context context,int dbPath,String dbName) {
         try {
-            String databaseFilename = DATABASE_PATH + "/" + DATABASE_FILENAME;
+            String databaseFilename = DATABASE_PATH + "/" + dbName;
             File dir = new File(DATABASE_PATH);
             if (!dir.exists()) {
                 dir.mkdir();
             }
             if (!(new File(databaseFilename)).exists()) {
-                InputStream inputStream = context.getResources().openRawResource(R.raw.hero);
+                InputStream inputStream = context.getResources().openRawResource(dbPath);
                 FileOutputStream fileOutputStream = new FileOutputStream(databaseFilename);
                 byte[] buffer = new byte[8192];
                 int count = 0;

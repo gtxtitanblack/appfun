@@ -4,7 +4,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.appfun.R;
 import com.example.appfun.bean.HeroDetailsInfo;
+import com.example.appfun.bean.ItemDetailsInfo;
+import com.example.appfun.constant.ConstantParms;
+import com.example.appfun.url.URLConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +16,13 @@ import java.util.List;
 /**
  * Created by zx on 2016/1/25.
  */
-public class HeroDetailsService {
-    public List<HeroDetailsInfo> getAllData(Context context) {
-        SQLiteDatabase db = DatabaseHelper.openDatabase(context);
+public class DataDetailsService {
+    public static final String HERODATA_FILENAME = "hero.db";
+    public static final String ITEMDATA_FILENAME = "item.db";
+
+
+    public List<HeroDetailsInfo> getAllHeroData(Context context) {
+        SQLiteDatabase db = DatabaseHelper.openDatabase(context, R.raw.hero, HERODATA_FILENAME);
         List<HeroDetailsInfo> heroDetailsInfos = new ArrayList<>();
         Cursor cursor = db.rawQuery("select * from heroinfo", null);
         while (cursor.moveToNext()) {
@@ -49,9 +57,9 @@ public class HeroDetailsService {
 
 
     //获取单条数据
-    public HeroDetailsInfo findHeroInfo(String heroname, Context context) {
-        SQLiteDatabase db = DatabaseHelper.openDatabase(context);
-        Cursor cursor = db.rawQuery("select * from heroinfo where hero_name=?", new String[]{heroname});
+    public HeroDetailsInfo findHeroInfo(String heroName, Context context) {
+        SQLiteDatabase db = DatabaseHelper.openDatabase(context, R.raw.hero, HERODATA_FILENAME);
+        Cursor cursor = db.rawQuery("select * from heroinfo where hero_name=?", new String[]{heroName});
         HeroDetailsInfo heroDetailsInfo = null;
         while (cursor.moveToNext()) {
             heroDetailsInfo = new HeroDetailsInfo();
@@ -77,6 +85,31 @@ public class HeroDetailsService {
             heroDetailsInfo.setHero_int_up(cursor.getFloat(cursor.getColumnIndex("hero_int_up")));
             heroDetailsInfo.setHero_agi_up(cursor.getFloat(cursor.getColumnIndex("hero_agi_up")));
         }
+        cursor.close();
+        db.close();
         return heroDetailsInfo;
+    }
+
+    //获取单条数据
+    public List<ItemDetailsInfo> getAllItemInfo(Context context) {
+        SQLiteDatabase db = DatabaseHelper.openDatabase(context, R.raw.item, ITEMDATA_FILENAME);
+        List<ItemDetailsInfo> itemDetailsInfos = new ArrayList<>();
+        Cursor cursor = db.rawQuery("select * from iteminfo ", null);
+
+        while (cursor.moveToNext()) {
+            ItemDetailsInfo itemDetailsInfo = new ItemDetailsInfo();
+            itemDetailsInfo.setItem_alias(cursor.getString(cursor.getColumnIndex("item_alias")));
+            itemDetailsInfo.setItem_cd(cursor.getInt(cursor.getColumnIndex("item_cd")));
+            itemDetailsInfo.setItem_cost(cursor.getString(cursor.getColumnIndex("item_cost")));
+            itemDetailsInfo.setItem_effect((cursor.getString(cursor.getColumnIndex("item_effect"))));
+            itemDetailsInfo.setItem_info((cursor.getString(cursor.getColumnIndex("item_info"))));
+            itemDetailsInfo.setItem_intros((cursor.getString(cursor.getColumnIndex("item_intros"))));
+            itemDetailsInfo.setItem_name((cursor.getString(cursor.getColumnIndex("item_name"))));
+            itemDetailsInfo.setUrl(URLConfig.ITEM_IMG_URL + cursor.getString(cursor.getColumnIndex("item_alias")) + ConstantParms.largePic);
+            itemDetailsInfos.add(itemDetailsInfo);
+        }
+        cursor.close();
+        db.close();
+        return itemDetailsInfos;
     }
 }

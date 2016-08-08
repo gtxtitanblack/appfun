@@ -1,4 +1,4 @@
-package com.example.appfun;
+package com.example.appfun.services;
 
 import com.example.appfun.bean.HeroSimpleInfo;
 import com.example.appfun.url.URLConfig;

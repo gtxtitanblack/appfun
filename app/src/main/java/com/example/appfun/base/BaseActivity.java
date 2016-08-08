@@ -1,12 +1,13 @@
-package com.example.appfun.ui;
+package com.example.appfun.base;
 
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+
 import com.example.appfun.R;
+import com.example.appfun.ui.SwipeBackActivity;
 
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
 
@@ -37,8 +38,9 @@ public abstract class BaseActivity extends SwipeBackActivity {
 
     //设置头部标题
     public void setBarTitleText(String titleText) {
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        android.support.v7.widget.Toolbar mToolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         if (null != mToolbar) {
+//            imageView.setOnClickListener(v -> finish());
             mToolbar.setTitle(titleText);
             setSupportActionBar(mToolbar);
             mToolbar.setTitleTextColor(0xffffffff);
@@ -47,6 +49,8 @@ public abstract class BaseActivity extends SwipeBackActivity {
             mToolbar.setOnMenuItemClickListener(item -> true);
         }
     }
+
+
 
     @Override
     public void onBackPressed() {

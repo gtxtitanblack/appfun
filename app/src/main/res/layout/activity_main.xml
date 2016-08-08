@@ -8,34 +8,8 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="com.example.appfun.MainActivity">
+    <include layout="@layout/recycle_view"/>
 
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/tool_bar">
-
-        </include>
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipelayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar"
-            >
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycleview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:padding="@dimen/activity_horizontal_margin"
-                />
-        </android.support.v4.widget.SwipeRefreshLayout>
-    </RelativeLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/id_nv_menu"
